@@ -26,10 +26,10 @@ int main()
       memset(&key, 0, sizeof(key));
       memset(&data, 0, sizeof(data));
  
-      key.data = "fruit";
-      key.size = sizeof("fruit");
-      data.data = "apple";
-      data.size = sizeof("apple");
+      key.data = "SHI";
+      key.size = sizeof("SHI");
+      data.data = "Yifan Shi";
+      data.size = sizeof("Yifan Shi");
  
       if ((ret = dbp->put(dbp, NULL, &key, &data, 0)) == 0)
             printf("db: %s: key stored.\n", (char *)key.data);
