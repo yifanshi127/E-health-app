@@ -1,2 +1,9 @@
 # E-health-app
 Your e-health app
+Just a planner fot the meeting
+	Github run-through
+	Define functions of the app
+		Convert signal to records in database 
+	        Display runtime on the screen 
+	Design database system
+
