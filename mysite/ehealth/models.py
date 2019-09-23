@@ -4,16 +4,16 @@ from django.db import models
 
 class Person(models.Model):
 	PersonID = models.IntegerField()
-	Name = models.CharField(max_length=200)
+	Name = models.CharField(max_length=200, blank=True, null=True)
 	Age = models.IntegerField()
-	Gender = models.CharField(max_length=10)
+	Gender = models.CharField(max_length=10, blank=True, null=True)
 	Personalheight = models.IntegerField()
 	Personalweight = models.IntegerField()
 
 
 class HealthData(models.Model):
-	DataID = models.IntegerField()
 	PersonID = models.ForeignKey(Person, on_delete=models.CASCADE)
+	DataID = models.IntegerField()
 	Rec_date = models.DateTimeField('recorded')
 	OriginalEMG = models.IntegerField()
 	FrequencyEMG = models.IntegerField()
