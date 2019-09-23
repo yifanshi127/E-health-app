@@ -3,11 +3,21 @@ from django.db import models
 # Create your models here.
 
 class Person(models.Model):
-	name = models.CharField(max_length=200)
-	age = models.IntegerField()
+	PersonID = models.IntegerField()
+	Name = models.CharField(max_length=200)
+	Age = models.IntegerField()
+	Gender = models.CharField(max_length=10)
+	Personalheight = models.IntegerField()
+	Personalweight = models.IntegerField()
+
 
 class HealthData(models.Model):
-	person = models.ForeignKey(Person, on_delete=models.CASCADE)
-	data = models.CharField(max_length=500)
-	rec_date = models.DateTimeField('recorded')
-
+	DataID = models.IntegerField()
+	PersonID = models.ForeignKey(Person, on_delete=models.CASCADE)
+	Rec_date = models.DateTimeField('recorded')
+	OriginalEMG = models.IntegerField()
+	FrequencyEMG = models.IntegerField()
+	Medianfrequency = models.IntegerField()
+	Temperature = models.IntegerField()
+	SPO2 = models.IntegerField()
+	Pulse = models.IntegerField()
