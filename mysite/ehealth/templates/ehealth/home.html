@@ -1,0 +1,15 @@
+{% extends 'ehealth/base.html' %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+<h1>Home Page</h1>
+  {% csrf_token %}
+  <button onclick="location.href = '{% url 'start' %}'">Start</button>
+  <button onclick="location.href = '{% url 'pause' %}'">Pause</button>
+  {% if data %}
+  {{data}}
+  {% endif %}
+{% endblock %}

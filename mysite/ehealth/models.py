@@ -4,12 +4,11 @@ from django.contrib.postgres.fields import ArrayField
 # Create your models here.
 
 class Person(models.Model):
-	name = models.CharField(max_length=200, blank=True, null=True)
+	name = models.CharField(max_length=200, null=True, unique=True)
 	age = models.IntegerField()
 	gender = models.CharField(max_length=10, blank=True, null=True)
 	personalheight = models.IntegerField()
 	personalweight = models.IntegerField()
-
 
 class HealthData(models.Model):
 	person = models.ForeignKey(Person, on_delete=models.CASCADE)

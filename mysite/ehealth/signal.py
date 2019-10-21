@@ -58,7 +58,7 @@ def showpic(rawemg, freqemg,media):
   ax1.axvline(x=media,linewidth=3,color='r')
 
 
-if __name__ == '__main__':
+if __name__ == '__main__': #function as a script
   emg = getemg()
   freqemg = emgfft(emg)
   media = mediafreq(freqemg)

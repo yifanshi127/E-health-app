@@ -1,0 +1,12 @@
+{% extends 'ehealth/base.html' %}
+
+{% block title %} Create New List {% endblock %}
+
+{% block content %}
+Create User
+<form method= "post" action="/ehealth/create/">
+  {% csrf_token%}
+  {{form.as_p}}
+  <button type="submit",name = "save">Submit</button>
+</form>
+{% endblock %}

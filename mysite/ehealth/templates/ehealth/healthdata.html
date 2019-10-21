@@ -1,0 +1,11 @@
+{% extends "ehealth/base.html" %}
+{%block title %}View List{% endblock %}
+
+{% block content %}
+  <h1>{{person.name}}</h1>
+  <ul>
+  {% for healthdata in person.healthdata_set.all %}
+    <li>{{healthdata.rec_date}}</li>
+  {% endfor %}
+</ul>
+{% endblock %}

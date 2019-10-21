@@ -20,5 +20,3 @@ urlpatterns = [
     url(r'^ehealth/', include('ehealth.urls')),
     url(r'^admin/', admin.site.urls),
 ]
-
-
