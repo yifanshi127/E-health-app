@@ -15,8 +15,16 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
+from django.urls import path
+from register import views as register_views
 
 urlpatterns = [
     url(r'^ehealth/', include('ehealth.urls')),
     url(r'^admin/', admin.site.urls),
+    path("ehealth/register/",register_views.register, name="register"),
+    path("ehealth/login/", auth_views.LoginView.as_view(template_name='user/login.html'), name="login" ),
+    path("ehealth/logout/", auth_views.LogoutView.as_view(template_name='user/logout.html'), name="logout"),
+    path("ehealth/",include("django.contrib.auth.urls")),
+
 ]

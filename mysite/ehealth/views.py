@@ -1,65 +1,119 @@
 from django.shortcuts import render,get_object_or_404,redirect
-from django.http import HttpResponse, HttpResponseRedirect
-from .models import HealthData, Person
-from .forms	import CreatNewPerson
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, QueryDict
+from .models import HealthData,Person
+from .forms	import CreatNewPerson,SwitchPerson
 from .signal import *
+from django.contrib import messages
+from django.db import IntegrityError
 import time
-
 # import requests
+
+
 # from subprocess import run,PIPE
 
-p = Person.objects.get(name="Guest")
+# p = Person.objects.get(name="Guest")
+pauseinsertion = True
 
-def index(response, id):
-	person = Person.objects.get(id = id)
-	return render(response,"ehealth/healthdata.html",{"person": person})
+def index(request, id):
+	p = Person.objects.get(id = id)
+	if p in request.user.person.all():
+		return render(request,"ehealth/healthdata.html", {"person": person})
+	return render(request, "ehealth/history.html", {})
 
-def home(response):
-	data = response.GET['msg_content']
-	print(data)
-	return render(response, "ehealth/home.html")
-# ,{"data": data}
-def create(response):
-	if response.method == "POST":
-		form = CreatNewPerson(response.POST)
+def home(request):
+		# "emg","temp","plus","spo"
+	return render(request, "ehealth/home.html")
+	# ,{"data": data})
+
+
+def create(request):
+	if request.method == "POST":
+		form = CreatNewPerson(request.POST)
 
 		if form.is_valid():
+			# form.instance.user = Person.objects.get(user=self.request.user)
 			name = form.cleaned_data["name"]
 			age = form.cleaned_data["age"]
 			gender = form.cleaned_data["gender"]
 			personalheight = form.cleaned_data["personalheight"]
 			personalweight = form.cleaned_data["personalweight"]
-			global p
 			p = Person(name=name,age=age,gender=gender,personalheight=personalheight,personalweight=personalweight)
-			p.save()
-
-		return HttpResponseRedirect("/ehealth")
+			try:
+				p.save()
+				request.user.person.add(p)
+			except IntegrityError:
+				messages.warning(request,'You have already added your information.')
+				p.delete()
+				return redirect("/ehealth/create")
+		return HttpResponseRedirect("/ehealth/%i" %p.id)
 		# return p,HttpResponseRedirect("/ehealth/%i" %p.id)
-
 	else:
 		form = CreatNewPerson()
-	return render(response, "ehealth/create.html", {"form":form})
+	return render(request, "ehealth/create.html", {"form":form})
 
-def button(response):
-	return render(response,'ehealth/home.html')
+# def button(request):
+# 	return render(request,'ehealth/home.html')
+#
+def switch(request):
+	if request.method == "POST":
+		form = SwitchPerson(request.POST)
+		if form.is_valid():
+			name = form.cleaned_data["name"]
+			global p
+			p = Person.objects.get(name=name)
 
-def insertion(response):
+		return HttpResponseRedirect("/ehealth")
+	else:
+		form = SwitchPerson()
+	return render(request,"ehealth/switch.html",{"form":form})
+
+def history(request):
+	return render(request, "ehealth/history.html", {})
+
+def insertion(request):
+	global pauseinsertion
+	global p
+	pauserinsertion = not pauseinsertion
+	print(pauserinsertion)
+	if pauseinsertion is False:
+		print("ok")
+		if request.method == "GET":
+			med = request.GET.get('med')
+			femg = request.GET.getlist('femg')
+			emg = request.GET.getlist('emg')
+			temp = request.GET.get('temp')
+			plus = request.GET.get('plus')
+			spo = request.GET.get('spo')
+			h = HealthData(person=person,originalEMG=emg,freqemg=femg,mediafreq=med,temperature=temp ,spO2=spo, pulse=plus)
+			h.save()
+			print(med)
+			print(femg)
+			print(emg)
+			print(plus)
+			print(spo)
+		return render(request,'ehealth/home.html')
+	else:
+		h = HealthData()
+	return render(request,'ehealth/home.html') #do nothing to resquests - need confirm
+
+	# h = HealthData(person = p, originalEMG = getemg().tolist(),temperature = gettem() ,spO2 = getspo(), pulse = getplu())
+	# print(h)
+	# h.save()
 	# global pauseinsertion
 	# pauseinsertion = False
 	# while True:
-	global p
-	h = HealthData(person = p, originalEMG = getemg().tolist(),temperature = gettem() ,spO2 = getspo(), pulse = getplu())
-	print(h)
-	h.save()
 	# time.sleep(3)
 		# if pauseinsertion is True:
-	return render(response,'ehealth/home.html')
 
-def pauseinsertion(response):
-	print("pause")
-	global pauseinsertion
-	pauseinsertion = True
-	return render(response,'ehealth/home.html')
+#change the originalEMG temperature spO2 pulse
+#		 -> originalEMG,temperature,spO2,pulse = request.GET['xx']
+
+
+# def pauseinsertion(request):
+# 	print("pause")
+# 	global pauseinsertion
+# 	pauseinsertion = True
+# 	return render(request,'ehealth/home.html')
 
 # def runmonitor(response):
 # 	out = run([sys.executable,'//Users//yifanshi//mysite//ehealth//scripts//monitor.py'],shell=False,stdout=PIPE)

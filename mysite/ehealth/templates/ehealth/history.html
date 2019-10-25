@@ -1,17 +1,16 @@
-{% extends 'ehealth/base.html' %}
+{% extends "ehealth/base.html" %}
 
 {% block title %}
-Home
+History
 {% endblock %}
 
+
 {% block content %}
-<h3>EMG Monitor</h3>
-  {% csrf_token %}
+<h3>History</h3>
   {% if user.is_authenticated %}
-    <button onclick="location.href = '{% url 'insertion' %}'">Start/Pause</button>
-    {% if data %}
-    {{data}}
-    {% endif %}
+    {% for person in user.person.all %}
+      <p><a href = "/ehealth/{{person.id}}">{{person.name}}</a></p>
+    {% endfor %}
   {% else %}
     <p>You need to login in to use this page, log in <a href="/ehealth/login">here</p>
   {% endif %}

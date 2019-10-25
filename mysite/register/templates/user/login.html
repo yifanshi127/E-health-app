@@ -1,0 +1,16 @@
+{% extends "ehealth/base.html" %}
+
+{% block title %}
+Login here
+{% endblock %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+<h3>Login</h3>
+  <form method="post" class="from-group">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <p> Don't have an account? Create <a href="/ehealth/register">here</p>
+    <button type="submit" class="btn btn-success">login</button>
+  </form>
+{% endblock %}

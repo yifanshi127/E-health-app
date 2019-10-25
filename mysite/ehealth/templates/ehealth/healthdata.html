@@ -5,7 +5,7 @@
   <h1>{{person.name}}</h1>
   <ul>
   {% for healthdata in person.healthdata_set.all %}
-    <li>{{healthdata.rec_date}}</li>
+    <li>{{healthdata.values()}}</li>
   {% endfor %}
 </ul>
 {% endblock %}
