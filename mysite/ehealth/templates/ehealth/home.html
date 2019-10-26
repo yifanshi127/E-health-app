@@ -8,10 +8,18 @@ Home
 <h3>EMG Monitor</h3>
   {% csrf_token %}
   {% if user.is_authenticated %}
-    <button onclick="location.href = '{% url 'insertion' %}'">Start/Pause</button>
-    {% if data %}
-    {{data}}
+    <!-- <button onclick="location.href = '{% url 'insertion' %}'"></button> -->
+    {% if person %}
+    <br></br>
+    <h4>{{person.name}}, Welcome! </h4>
+    <br></br>
     {% endif %}
+    {% if message %}
+    <br></br>
+    <h4>{{message}}</h4>
+    <br></br>
+    {% endif %}
+    <button type="button" class="btn btn-success" onclick="window.location.href = '/ehealth/insertion';">Start</button>
   {% else %}
     <p>You need to login in to use this page, log in <a href="/ehealth/login">here</p>
   {% endif %}

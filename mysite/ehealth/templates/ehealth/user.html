@@ -1,0 +1,40 @@
+{% extends "ehealth/base.html" %}
+{%block title %}User's profile{% endblock %}
+
+{% block content %}
+<h1>{{request.user.username}}'s profile</h1>
+<table class="table table-striped">
+  <tbody>
+    <tr>
+      <th scope="row">Name:</th>
+      <td>{{person.name}}</td>
+    </tr>
+    <tr>
+      <th scope="row">Age:</th>
+      <td>{{person.age}}</td>
+    </tr>
+    <tr>
+      <th scope="row">Gender:</th>
+      <td>{{person.gender}}</td>
+    </tr>
+    <tr>
+      <th scope="row">Height:</th>
+      <td>{{person.personalheight}}</td>
+    </tr>
+    <tr>
+      <th scope="row">Weight:</th>
+      <td>{{person.personalweight}}</td>
+    </tr>
+  </tbody>
+</table>
+<button type="button" class="btn btn-success" onclick="window.location.href = '/ehealth/update';">Update</button>
+{% endblock %}
+
+
+<!-- <ul class="list-group">
+  <li class="list-group-item">Name: {{person.name}}</li>
+  <li class="list-group-item">Age: {{person.age}}</li>
+  <li class="list-group-item">Gender: {{person.gender}}</li>
+  <li class="list-group-item">Height: {{person.personalheight}}</li>
+  <li class="list-group-item">Weight: {{person.personalweight}}</li>
+</ul> -->

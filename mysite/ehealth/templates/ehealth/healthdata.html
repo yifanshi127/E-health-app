@@ -3,9 +3,27 @@
 
 {% block content %}
   <h1>{{person.name}}</h1>
-  <ul>
+  <table class="table">
+    <thead class="thead-light">
+      <tr>
+        <th scope="col">Record Time</th>
+        <th scope="col">Median EMG frequency</th>
+        <th scope="col">Temperature</th>
+        <th scope="col">SPO2</th>
+        <th scope="col">Pulse</th>
+      </tr>
+    </thead>
+  <tbody>
   {% for healthdata in person.healthdata_set.all %}
-    <li>{{healthdata.values()}}</li>
+    <tr>
+      <td>{{healthdata.rec_date}}</td>
+      <td>{{healthdata.mediafreq}}</td>
+      <td>{{healthdata.temperature}}</td>
+      <td>{{healthdata.spO2}}</td>
+      <td>{{healthdata.pulse}}</td>
+    </tr>
   {% endfor %}
-</ul>
 {% endblock %}
+<!-- person.healthdata_set.all  -->
+<!--  -->
+<!-- <li>{{healthdata.rec_date}},{{healthdata.mediafreq}},{{healthdata.temperature}}</li> -->

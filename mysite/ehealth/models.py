@@ -22,9 +22,9 @@ class HealthData(models.Model):
 	originalEMG = ArrayField(models.FloatField())
 	frequencyEMG = ArrayField(models.FloatField())
 	mediafreq = models.IntegerField()
-	temperature = models.FloatField()
-	spO2 = models.IntegerField()
-	pulse = models.IntegerField()
+	temperature = models.FloatField(null=True)
+	spO2 = models.IntegerField(null=True)
+	pulse = models.IntegerField(null=True)
 
 	# def __str__(self):
 	# 	return self.rec_date

@@ -22,7 +22,7 @@ import random
 from urllib import parse
 import matplotlib.pyplot as plt
 
-url = 'http://192.168.0.142:8000/ehealth/?'
+url = 'http://10.16.202.74:8000/ehealth/insertion/?'
 
 
 #adapter = pygatt.backends.GATTToolBackend()

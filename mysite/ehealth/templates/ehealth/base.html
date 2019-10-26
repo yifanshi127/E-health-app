@@ -42,10 +42,10 @@
   <div class="sidenav">
     <a href="/ehealth">Home</a>
     <a href="/ehealth/create">Create</a>
-    <a href="/ehealth/switch">Switch</a>
+    <!-- <a href="/ehealth/switch">Switch</a> -->
     <a href="/ehealth/history">History</a>
     {% if user.is_authenticated %}
-      <a href="/ehealth">{{request.user.username}}</a>
+      <a href="/ehealth/user">{{request.user.username}}</a>
       <a href="/ehealth/logout">Logout</a>
     {% else %}
       <a href="/ehealth/login">Login</a>
