@@ -1,0 +1,25 @@
+{% extends "ehealth/base.html" %}
+
+{% block title %}
+Insertion
+{% endblock %}
+
+{% block content %}
+<h3>EMG Monitor</h3>
+  {% csrf_token %}
+  {% if user.is_authenticated %}
+    <!-- <button onclick="location.href = '{% url 'insertion' %}'"></button> -->
+    {% if message %}
+    <br></br>
+    <h4>Status: {{message}}</h4>
+    <h4>Person: {{person.name}}</h4>
+      <!-- {% if  mediafreq %}
+      <h4>Median EMG Frequency: {{mediafreq}}</h4>
+      {% endif %} -->
+    <br></br>
+    {% endif %}
+    <button type="button" class="btn btn-success" onclick="window.location.href = '/ehealth';">Refresh</button>
+  {% else %}
+    <p>You need to login in to use this page, log in <a href="/ehealth/login">here</p>
+  {% endif %}
+{% endblock %}

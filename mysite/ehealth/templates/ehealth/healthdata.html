@@ -14,7 +14,7 @@
       </tr>
     </thead>
   <tbody>
-  {% for healthdata in person.healthdata_set.all %}
+  {% for healthdata in person.healthdata_set.all reversed %}
     <tr>
       <td>{{healthdata.rec_date}}</td>
       <td>{{healthdata.mediafreq}}</td>

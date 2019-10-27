@@ -15,7 +15,8 @@ import time
 # from subprocess import run,PIPE
 
 p = Person.objects.get(name="guest")
-# pauseinsertion = True
+# med = 0
+# insertion = False
 
 def index(request, id):
 	global p
@@ -123,17 +124,26 @@ def update(request):
 def history(request):
 	return render(request, "ehealth/history.html", {})
 
+# def clearhistory(request):
+# 	global p
+# 	p.healthdata_set.all.delete()
+# 	return render(request, "ehealth/history.html", {})
+
 def insertion(request):
-	# global pauseinsertion
-	# pauserinsertion = not pauseinsertion
 	# print(pauserinsertion)
 	# if pauseinsertion is False:
 	# 	print("ok")
 	try:
-		message = "Recording started"
+		message = "Recording..."
 		print('med' in request.GET)
 		global p
+		# global insertion
+		# global med
 		if 'med' in request.GET:
+			# if 	insertion is False:
+			# 	insertion = True
+			# 	return HttpResponseRedirect("/ehealth/insertion")
+			# else:
 			med = request.GET.get('med')
 			femg = request.GET.getlist('femg')
 			emg = request.GET.getlist('emg')
@@ -147,16 +157,16 @@ def insertion(request):
 			print(emg)
 			print(plus)
 			print(spo)
-			# return render(request,'ehealth/home.html')
 		else:
 			h = HealthData()
-			message = "Recording stopped."
+			# return HttpResponseRedirect("/ehealth/insertion")
 			# messages.success(request,'Thank you for completing the exercise.')
 			# return redirect("/ehealth/")
 	except Person.DoesNotExist:
 		messages.warning(request,'You have not added your information,please add them.')
 		return HttpResponseRedirect("/ehealth/create")
-	return render(request,'ehealth/home.html',{"message":message}) #do nothing to resquests - need confirm
+	return render(request,'ehealth/insertion.html',{"message":message, "person":p})
+	#do nothing to resquests - need confirm
 
 	# user = request.user
 	# print(user)
