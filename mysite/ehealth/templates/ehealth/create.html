@@ -1,10 +1,10 @@
 {% extends 'ehealth/base.html' %}
 
-{% block title %} Create Person{% endblock %}
+{% block title %} Create {% endblock %}
 {% load crispy_forms_tags %}
 
 {% block content %}
-<h3>Create Person</h3>
+<h3>Create {{request.user.username}}'s information</h3>
 <form method= "post" action="/ehealth/create/" class="form-group">
   {% csrf_token%}
   {% if user.is_authenticated %}

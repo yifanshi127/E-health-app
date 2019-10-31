@@ -5,18 +5,19 @@ from .forms	import CreatNewPerson,UpdatePerson
 from .signal import *
 from django.contrib import messages
 from django.db import IntegrityError
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist,MultipleObjectsReturned
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 import time
-# import requests
-# SwitchPerson
 
-# from subprocess import run,PIPE
 
-p = Person.objects.get(name="guest")
-# med = 0
-# insertion = False
+# set default user and person in case the user forget to create
+try:
+	u = User.objects.create(username="guset",password="1DS8ylMMP")
+	p = Person.objects.create(user=u,name="guest",age=10,gender="Male",personalheight=160,personalweight=50)
+except IntegrityError:
+	u = User.objects.filter(username="guest")
+	p = Person.objects.filter(name="guest")
 
 def index(request, id):
 	global p
@@ -25,7 +26,7 @@ def index(request, id):
 		if p in request.user.person.all():
 			return render(request,"ehealth/healthdata.html", {"person": p})
 	except Person.DoesNotExist:
-		messages.warning(request,'You do not have permission to those records.')
+		messages.warning(request,'You do not have permission to access those records.')
 		return HttpResponseRedirect("/ehealth/history")
 	return render(request, "ehealth/history.html", {})
 
@@ -38,7 +39,6 @@ def home(request):
 		messages.warning(request,'You have to login first.')
 		return HttpResponseRedirect("/ehealth/login")
 	return render(request, "ehealth/home.html",{"person": p})
-	# ,{"data": data})
 
 
 def create(request):
@@ -47,7 +47,6 @@ def create(request):
 		form = CreatNewPerson(request.POST)
 
 		if form.is_valid():
-			# form.instance.user = Person.objects.get(user=self.request.user)
 			name = form.cleaned_data["name"]
 			age = form.cleaned_data["age"]
 			gender = form.cleaned_data["gender"]
@@ -67,30 +66,22 @@ def create(request):
 				messages.warning(request,'Please fill in your username correctly.')
 				return HttpResponseRedirect("/ehealth/create")
 		return HttpResponseRedirect("/ehealth/%i" %p.id)
-		# return p,HttpResponseRedirect("/ehealth/%i" %p.id)
 	else:
 		form = CreatNewPerson()
 	return render(request, "ehealth/create.html", {"form":form})
 
-# def button(request):
-# 	return render(request,'ehealth/home.html')
-#
-# def switch(request):
-# 	if request.method == "POST":
-# 		form = SwitchPerson(request.POST)
-# 		if form.is_valid():
-# 			name = form.cleaned_data["name"]
-# 			global p
-# 			p = Person.objects.get(name=name)
-#
-# 		return HttpResponseRedirect("/ehealth")
-# 	else:
-# 		form = SwitchPerson()
-# 	return render(request,"ehealth/switch.html",{"form":form})
+
 def user(request):
-	user = str(request.user)
-	if request.method == "POST":
+	try:
+		user = str(request.user)
 		global p
+		p = Person.objects.get(name=user)
+	except ObjectDoesNotExist:
+		messages.warning(request,'Please fill in your information first.')
+		return HttpResponseRedirect("/ehealth/create")
+	except MultipleObjectsReturned:
+		p = Person.objects.filter(name=user)
+		p[0].delete()
 		p = Person.objects.get(name=user)
 	return render(request, "ehealth/user.html",{"person":p})
 
@@ -100,95 +91,106 @@ def update(request):
 		form = UpdatePerson(request.POST)
 		if form.is_valid():
 			global p
-			p = Person.objects.get(name=user)
-			p.delete()
 			name = form.cleaned_data["name"]
 			age = form.cleaned_data["age"]
 			gender = form.cleaned_data["gender"]
 			personalheight = form.cleaned_data["personalheight"]
 			personalweight = form.cleaned_data["personalweight"]
 			if name == user:
-				p = Person(name=name,age=age,gender=gender,personalheight=personalheight,personalweight=personalweight)
-				p.save()
-				request.user.person.add(p)
+				p = Person.objects.filter(name=user).update(name=name,age=age,gender=gender,personalheight=personalheight,personalweight=personalweight)
 			else:
 				messages.warning(request,'Please fill in your username correctly.')
 				return HttpResponseRedirect("/ehealth/update")
 		return HttpResponseRedirect("/ehealth/user")
-		# return p,HttpResponseRedirect("/ehealth/%i" %p.id)
 	else:
 		form = UpdatePerson()
 	return render(request, "ehealth/update.html", {"form":form})
 
 
 def history(request):
+	try:
+		user = str(request.user)
+		if user == "AnonymousUser":
+			messages.warning(request,'You have to login first.')
+			return HttpResponseRedirect("/ehealth/login")
+		global p
+		p = Person.objects.get(name=user)
+	except ObjectDoesNotExist:
+		messages.warning(request,'Please fill in your information first.')
+		return HttpResponseRedirect("/ehealth/create")
+	except MultipleObjectsReturned:
+		p = Person.objects.filter(name=user)
+		p[0].delete()
+		p = Person.objects.get(name=user)
 	return render(request, "ehealth/history.html", {})
 
-# def clearhistory(request):
-# 	global p
-# 	p.healthdata_set.all.delete()
-# 	return render(request, "ehealth/history.html", {})
-
 def insertion(request):
-	# print(pauserinsertion)
-	# if pauseinsertion is False:
-	# 	print("ok")
 	try:
 		message = "Recording..."
 		print('med' in request.GET)
 		global p
-		# global insertion
-		# global med
 		if 'med' in request.GET:
-			# if 	insertion is False:
-			# 	insertion = True
-			# 	return HttpResponseRedirect("/ehealth/insertion")
-			# else:
 			med = request.GET.get('med')
 			femg = request.GET.getlist('femg')
 			emg = request.GET.getlist('emg')
 			temp = request.GET.get('temp')
 			plus = request.GET.get('plus')
 			spo = request.GET.get('spo')
-			h = HealthData(person=p,originalEMG=emg,frequencyEMG=femg,mediafreq=med,temperature=temp ,spO2=spo, pulse=plus)
+			fati = request.GET.get('fati')
+			h = HealthData(person=p,originalEMG=emg,frequencyEMG=femg,mediafreq=med,temperature=temp ,spO2=spo, pulse=plus, fati=fati)
 			h.save()
 			print(med)
 			print(femg)
 			print(emg)
 			print(plus)
 			print(spo)
+			print(fati)
 		else:
 			h = HealthData()
-			# return HttpResponseRedirect("/ehealth/insertion")
-			# messages.success(request,'Thank you for completing the exercise.')
-			# return redirect("/ehealth/")
 	except Person.DoesNotExist:
 		messages.warning(request,'You have not added your information,please add them.')
 		return HttpResponseRedirect("/ehealth/create")
 	return render(request,'ehealth/insertion.html',{"message":message, "person":p})
-	#do nothing to resquests - need confirm
 
+
+# --ABANDONED FUNCTIONS--
+# def button(request):
+# 	return render(request,'ehealth/home.html')
+#
+# def switch(request):
+# 	if request.method == "POST":
+# 		form = SwitchPerson(request.POST)
+# 		if form.is_valid():
+# 			name = form.cleaned_data["name"]
+# 			#global p
+# 			p = Person.objects.get(name=name)
+# 		return HttpResponseRedirect("/ehealth")
+# 	else:
+# 		form = SwitchPerson()
+# 	return render(request,"ehealth/switch.html",{"form":form})
+
+#   def clearhistory(request):
+# 	#global p
+# 	p.healthdata_set.all.delete()
+# 	return render(request, "ehealth/history.html", {})
+
+#  def insertion(request):
 	# user = request.user
 	# print(user)
-	# global p
+	# #global p
 	# p = Person.objects.get(name=user)
-
 	# h = HealthData(person = p, originalEMG = getemg().tolist(),temperature = gettem() ,spO2 = getspo(), pulse = getplu())
 	# print(h)
 	# h.save()
-	# global pauseinsertion
+	# #global pauseinsertion
 	# pauseinsertion = False
 	# while True:
 	# time.sleep(3)
-		# if pauseinsertion is True:
-
-#change the originalEMG temperature spO2 pulse
-#		 -> originalEMG,temperature,spO2,pulse = request.GET['xx']
-
+	# 	if pauseinsertion is True:
 
 # def pauseinsertion(request):
 # 	print("pause")
-# 	global pauseinsertion
+# 	#global pauseinsertion
 # 	pauseinsertion = True
 # 	return render(request,'ehealth/home.html')
 
