@@ -25,13 +25,15 @@ SECRET_KEY = 'e@z=*w4a3vafy#-$kvt!0m$lvsbobg04t4u4mtaz!2gc13!tve'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]','10.16.202.74','192.168.0.142']
 
 
 # Application definition
 
 INSTALLED_APPS = [
     'ehealth.apps.EhealthConfig',
+    'crispy_forms',
+    'register.apps.RegisterConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -76,8 +78,12 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ehealthdb',
+        'USER': 'postgres',
+        'PASSWORD': 'yifanshi',
+        'HOST': 'localhost',
+        'PORT': '5432'
     }
 }
 
@@ -106,7 +112,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Australia/Sydney'
 
 USE_I18N = True
 
@@ -119,3 +125,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+CRISPY_TEMPLATE_PACK= 'bootstrap4'
+
+LOGIN_REDIRECT_URL = "/ehealth"

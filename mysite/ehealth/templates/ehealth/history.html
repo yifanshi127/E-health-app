@@ -1,0 +1,19 @@
+{% extends "ehealth/base.html" %}
+
+{% block title %}
+History
+{% endblock %}
+
+
+{% block content %}
+<h3>History</h3>
+  {% if user.is_authenticated %}
+    {% for person in user.person.all %}
+      <p><a href = "{% url 'index' person.id %}">{{person.name}}</a></p>
+    {% endfor %}
+  {% else %}
+    <p>You need to login in to use this page, log in <a href="/ehealth/login">here</p>
+  {% endif %}
+{% endblock %}
+
+<!-- /ehealth/{{person.id}} -->

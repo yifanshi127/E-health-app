@@ -1,0 +1,18 @@
+<!-- Abandoned -->
+{% extends 'ehealth/base.html' %}
+
+{% block title %} Switch User {% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<h3>Swtich Person</h3>
+<form method= "post" action="/ehealth/switch/" class="form-group">
+  {% csrf_token%}
+  {% if user.is_authenticated %}
+    {{ form|crispy }}
+    <button type="submit",name = "save" class="btn btn-success">Submit</button>
+  {% else %}
+    <p>You need to login in to use this page, log in <a href="/ehealth/login">here</p>
+  {% endif %}
+</form>
+{% endblock %}
